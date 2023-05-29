@@ -72,4 +72,28 @@ public class BooleanSearchEngine implements SearchEngine {
 
         return response;
     }
+
+    public ArrayList<PageEntry> searchByManyWords(String words) {
+
+        try {
+            Reader reader = new Reader("stop-ru.txt");
+            List<String> stopWords = reader.getWords();
+
+
+            List<String> separatedWords = Arrays.asList(words.split(" "));
+
+            for (String word: separatedWords) {
+                if (stopWords.contains(word)) {
+                    separatedWords.remove(word);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        ArrayList<PageEntry> response = indexingMap.get(words);
+        response.sort(PageEntry::compareTo);
+
+        return response;
+    }
 }
