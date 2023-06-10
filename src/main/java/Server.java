@@ -23,7 +23,6 @@ public class Server {
                         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 ) {
 
-                    out.println("Сервер запущен");
                     String word = in.readLine();
 
                     ArrayList<PageEntry> response = engine.search(word);

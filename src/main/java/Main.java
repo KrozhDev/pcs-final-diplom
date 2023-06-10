@@ -12,10 +12,9 @@ public class Main {
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));)
         {
+
+            out.println("математика");
             String response = in.readLine();
-            System.out.println(response);
-            out.println("игра");
-            response = in.readLine();
             System.out.println(response);
 
         } catch (IOException e) {

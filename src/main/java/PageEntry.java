@@ -35,4 +35,10 @@ public class PageEntry implements Comparable<PageEntry> {
     public String toString(){
         return this.pdfName + " " + this.page + " " + this.count;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        PageEntry pageEntry = (PageEntry) o;
+        return  ( pageEntry.getPdfName().equals(this.getPdfName()) && pageEntry.getPage() == this.getPage());
+    }
 }

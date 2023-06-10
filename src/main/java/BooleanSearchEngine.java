@@ -1,6 +1,7 @@
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
+import com.itextpdf.layout.splitting.BreakAllSplitCharacters;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,9 +88,23 @@ public class BooleanSearchEngine implements SearchEngine {
                     separatedWords.remove(word);
                 }
             }
+
+//            ArrayList<PageEntry> response = indexingMap.get(separatedWords.get(0));
+//            for (int i = 1; i < separatedWords.size(); i++) {
+//                for (PageEntry responseWord: response) {
+//                    if (separatedWords.get(i).equals(responseWord.ge)
+//                }
+//            }
+
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+
+
+
+
 
         ArrayList<PageEntry> response = indexingMap.get(words);
         response.sort(PageEntry::compareTo);
