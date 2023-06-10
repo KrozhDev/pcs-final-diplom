@@ -1,7 +1,9 @@
+import java.util.Objects;
+
 public class PageEntry implements Comparable<PageEntry> {
     private final String pdfName;
     private final int page;
-    private final int count;
+    private int count;
 
     public PageEntry(String pdfName, int page, int count) {
         this.pdfName = pdfName;
@@ -21,6 +23,9 @@ public class PageEntry implements Comparable<PageEntry> {
         return count;
     }
 
+    public void setCount(int count) {
+        this.count = count;
+    }
 
     @Override
     public int compareTo(PageEntry o) {
@@ -40,5 +45,10 @@ public class PageEntry implements Comparable<PageEntry> {
     public boolean equals(Object o) {
         PageEntry pageEntry = (PageEntry) o;
         return  ( pageEntry.getPdfName().equals(this.getPdfName()) && pageEntry.getPage() == this.getPage());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pdfName, page);
     }
 }

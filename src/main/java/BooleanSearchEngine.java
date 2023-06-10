@@ -69,8 +69,6 @@ public class BooleanSearchEngine implements SearchEngine {
         ArrayList<PageEntry> response = indexingMap.get(word);
         response.sort(PageEntry::compareTo);
 
-
-
         return response;
     }
 
@@ -80,7 +78,6 @@ public class BooleanSearchEngine implements SearchEngine {
             Reader reader = new Reader("stop-ru.txt");
             List<String> stopWords = reader.getWords();
 
-
             List<String> separatedWords = Arrays.asList(words.split(" "));
 
             for (String word: separatedWords) {
@@ -89,26 +86,30 @@ public class BooleanSearchEngine implements SearchEngine {
                 }
             }
 
-//            ArrayList<PageEntry> response = indexingMap.get(separatedWords.get(0));
-//            for (int i = 1; i < separatedWords.size(); i++) {
-//                for (PageEntry responseWord: response) {
-//                    if (separatedWords.get(i).equals(responseWord.ge)
-//                }
-//            }
+            ArrayList<PageEntry> responseAsPageEntryList = indexingMap.get(separatedWords.get(0));
+            for (int i = 1; i < separatedWords.size(); i++) {
+                String nextSeparatedWord = separatedWords.get(i);
+                ArrayList<PageEntry> nextPageEntryList = indexingMap.get(nextSeparatedWord);
+                for (PageEntry pageEntry : responseAsPageEntryList) {
+                    for (PageEntry entry : nextPageEntryList) {
+                        if (pageEntry.equals(entry)) {
+                            pageEntry.setCount(pageEntry.getCount() + entry.getCount());
+                        } else {
+                            responseAsPageEntryList.add(entry);
+                        }
+                    }
+                }
+            }
 
-
+            responseAsPageEntryList.sort(PageEntry::compareTo);
+            return responseAsPageEntryList;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-
-
-
-
-
-        ArrayList<PageEntry> response = indexingMap.get(words);
-        response.sort(PageEntry::compareTo);
-
-        return response;
+//        ArrayList<PageEntry> response = indexingMap.get(words);
+//        response.sort(PageEntry::compareTo);
+//
+//        return response;
     }
 }

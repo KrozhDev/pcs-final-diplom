@@ -13,7 +13,7 @@ public class Main {
              BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));)
         {
 
-            out.println("математика");
+            out.println("искусственный интеллект");
             String response = in.readLine();
             System.out.println(response);
 

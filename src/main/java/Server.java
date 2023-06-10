@@ -12,7 +12,7 @@ public class Server {
 
         BooleanSearchEngine engine = new BooleanSearchEngine(new File("pdfs"));
 
-        System.out.println("Сервер запущен");
+//        System.out.println("Сервер запущен");
 
         try (ServerSocket serverSocket = new ServerSocket(PORT);) { // стартуем сервер один(!) раз
             while (true) { // в цикле(!) принимаем подключения
@@ -25,7 +25,7 @@ public class Server {
 
                     String word = in.readLine();
 
-                    ArrayList<PageEntry> response = engine.search(word);
+                    ArrayList<PageEntry> response = engine.searchByManyWords(word);
 
                     List<String> responseAsJson = getResponseAsJsonFormat(response);
 
