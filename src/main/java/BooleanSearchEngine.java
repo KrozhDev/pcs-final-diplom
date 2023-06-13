@@ -79,12 +79,26 @@ public class BooleanSearchEngine implements SearchEngine {
             List<String> stopWords = reader.getWords();
 
             List<String> separatedWords = Arrays.asList(words.split(" "));
+            List<String> wordsToDelete = new ArrayList<>();
+//            for (String word: separatedWords) {
+//                if (stopWords.contains(word)) {
+//                    wordsToDelete.add(word);
+//                }
+//            }
 
-            for (String word: separatedWords) {
-                if (stopWords.contains(word)) {
-                    separatedWords.remove(word);
+            Iterator<String> wordIterator = separatedWords.iterator();//создаем итератор
+            while(wordIterator.hasNext()) {//до тех пор, пока в списке есть элементы
+
+                String nextWord = wordIterator.next();//получаем следующий элемент
+                if (stopWords.contains(nextWord)) {
+                    wordIterator.remove();
                 }
             }
+//
+//            for (String word : wordsToDelete) {
+//                separatedWords.remove(word);
+//            }
+
 
             ArrayList<PageEntry> responseAsPageEntryList = indexingMap.get(separatedWords.get(0));
             for (int i = 1; i < separatedWords.size(); i++) {
