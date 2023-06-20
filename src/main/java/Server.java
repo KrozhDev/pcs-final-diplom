@@ -23,9 +23,17 @@ public class Server {
                         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 ) {
 
-                    String word = in.readLine();
+                    List<PageEntry> response;
 
-                    ArrayList<PageEntry> response = engine.searchByManyWords(word);
+                    String word = in.readLine().toLowerCase();
+
+                    if (word.split(" ").length < 2) {
+                        response = engine.search(word);
+                    } else {
+                        response = engine.searchByManyWords(word);
+                    }
+
+
 
                     List<String> responseAsJson = getResponseAsJsonFormat(response);
 
@@ -40,7 +48,7 @@ public class Server {
 
     }
 
-    private static List<String> getResponseAsJsonFormat(ArrayList<PageEntry> response) {
+    private static List<String> getResponseAsJsonFormat(List<PageEntry> response) {
         List<String> responseAsJson = new ArrayList<>();
 
         for (PageEntry pageEntry: response) {

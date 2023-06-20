@@ -1,12 +1,11 @@
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;
-import com.itextpdf.layout.splitting.BreakAllSplitCharacters;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-
+import java.util.stream.Collectors;
 
 
 public class BooleanSearchEngine implements SearchEngine {
@@ -37,12 +36,12 @@ public class BooleanSearchEngine implements SearchEngine {
     }
 
     private static void addWordsToIndexingMap(File pdfFile, int page, Map<String, Integer> freqs) {
-        for (String word: freqs.keySet()) {
+        for (String word : freqs.keySet()) {
             PageEntry pageEntry = new PageEntry(pdfFile.getName(), page, freqs.get(word));
 
             indexingMap.compute(word, (k, v) -> {
                 ArrayList<PageEntry> pageEntries = new ArrayList<>();
-                if (v==null) {
+                if (v == null) {
                     v = pageEntries;
                 }
                 v.add(pageEntry);
@@ -64,7 +63,7 @@ public class BooleanSearchEngine implements SearchEngine {
     }
 
     @Override
-    public ArrayList<PageEntry> search(String word) {
+    public List<PageEntry> search(String word) {
 
         ArrayList<PageEntry> response = indexingMap.get(word);
         response.sort(PageEntry::compareTo);
@@ -72,51 +71,58 @@ public class BooleanSearchEngine implements SearchEngine {
         return response;
     }
 
-    public ArrayList<PageEntry> searchByManyWords(String words) {
+    @Override
+    public List<PageEntry> searchByManyWords(String sentence) {
 
         try {
             Reader reader = new Reader("stop-ru.txt");
             List<String> stopWords = reader.getWords();
 
-            List<String> separatedWords = Arrays.asList(words.split(" "));
-            List<String> wordsToDelete = new ArrayList<>();
-//            for (String word: separatedWords) {
-//                if (stopWords.contains(word)) {
-//                    wordsToDelete.add(word);
-//                }
+            List<String> words = new ArrayList<>(Arrays.asList(sentence.split(" ")));
+//            for (String s : words.split(" ")) {
+//                separatedWords.add(s);
 //            }
 
-            Iterator<String> wordIterator = separatedWords.iterator();//создаем итератор
-            while(wordIterator.hasNext()) {//до тех пор, пока в списке есть элементы
+
+            List<String> wordsToDelete = new ArrayList<>();
+            for (String word : words) {
+                if (stopWords.contains(word)) {
+                    wordsToDelete.add(word);
+                }
+            }
+
+            Iterator<String> wordIterator = words.iterator();//создаем итератор
+            while (wordIterator.hasNext()) {//до тех пор, пока в списке есть элементы
 
                 String nextWord = wordIterator.next();//получаем следующий элемент
                 if (stopWords.contains(nextWord)) {
                     wordIterator.remove();
                 }
             }
-//
-//            for (String word : wordsToDelete) {
-//                separatedWords.remove(word);
-//            }
 
+            Map<PageEntry, Integer> pageEntries = new HashMap<>();
 
-            ArrayList<PageEntry> responseAsPageEntryList = indexingMap.get(separatedWords.get(0));
-            for (int i = 1; i < separatedWords.size(); i++) {
-                String nextSeparatedWord = separatedWords.get(i);
-                ArrayList<PageEntry> nextPageEntryList = indexingMap.get(nextSeparatedWord);
-                for (PageEntry pageEntry : responseAsPageEntryList) {
-                    for (PageEntry entry : nextPageEntryList) {
-                        if (pageEntry.equals(entry)) {
-                            pageEntry.setCount(pageEntry.getCount() + entry.getCount());
+            //ключ пейдж ентри файл страница
+            //значение это мой каунт
+
+            for (String word : words) {
+                List<PageEntry> nextWordPageEntries = search(word);
+                for (PageEntry pageEntry : nextWordPageEntries) {
+                    pageEntries.compute(pageEntry, (k, v) -> {
+                        if (v == null) {
+                            v = k.getCount();
                         } else {
-                            responseAsPageEntryList.add(entry);
+                            v += k.getCount();
                         }
-                    }
+                        return v;
+                    });
                 }
             }
 
-            responseAsPageEntryList.sort(PageEntry::compareTo);
-            return responseAsPageEntryList;
+            return pageEntries.entrySet().stream()
+                    .map(e -> new PageEntry(e.getKey().getPdfName(), e.getKey().getPage(), e.getValue()))
+                    .sorted()
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
