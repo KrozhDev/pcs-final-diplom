@@ -23,10 +23,6 @@ public class PageEntry implements Comparable<PageEntry> {
         return count;
     }
 
-    public void setCount(int count) {
-        this.count = count;
-    }
-
     @Override
     public int compareTo(PageEntry o) {
         if (o.getCount() - count == 0) {

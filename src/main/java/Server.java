@@ -12,10 +12,8 @@ public class Server {
 
         BooleanSearchEngine engine = new BooleanSearchEngine(new File("pdfs"));
 
-//        System.out.println("Сервер запущен");
-
-        try (ServerSocket serverSocket = new ServerSocket(PORT);) { // стартуем сервер один(!) раз
-            while (true) { // в цикле(!) принимаем подключения
+        try (ServerSocket serverSocket = new ServerSocket(PORT);) {
+            while (true) {
 
                 try (
                         Socket socket = serverSocket.accept();
@@ -24,19 +22,9 @@ public class Server {
                 ) {
 
                     List<PageEntry> response;
-
                     String word = in.readLine().toLowerCase();
-
-                    if (word.split(" ").length < 2) {
-                        response = engine.search(word);
-                    } else {
-                        response = engine.searchByManyWords(word);
-                    }
-
-
-
+                    response = engine.search(word);
                     List<String> responseAsJson = getResponseAsJsonFormat(response);
-
                     out.println(responseAsJson);
                 }
             }
